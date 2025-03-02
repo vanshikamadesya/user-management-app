@@ -3,7 +3,17 @@ import { AppDispatch, RootState } from "../features/store";
 import { loginUser } from "../features/authSlice";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link, useNavigate } from "react-router-dom";
-// import * as Yup from "yup";
+import * as Yup from "yup";
+
+// Validation Schema using Yup
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
 
 const Login = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,7 +24,8 @@ const Login = () => {
     <div className="bg-gradient-to-r from-cyan-800 to-purple-800 text-white flex justify-center items-center w-full h-screen">
       <div>
         <Formik
-          initialValues={{ email: "admin@gmail.com", password: "123456" }}
+          initialValues={{ email: "", password: "" }}
+          validationSchema={validationSchema} 
           onSubmit={async (values, { setSubmitting }) => {
             try {
               const result = await dispatch(loginUser(values));
@@ -50,9 +61,7 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="text-black text-lg font-normal">
-                Password:
-              </label>
+              <label className="text-black text-lg font-normal">Password:</label>
               <Field
                 type="password"
                 name="password"

@@ -8,6 +8,7 @@ import {
   Checkbox,
   Dialog,
 } from "@radix-ui/themes";
+
 import {
   EyeOpenIcon,
   Pencil1Icon,
@@ -30,6 +31,7 @@ import {
   handleSearch,
 } from "../utils/tableActions";
 import FilterPopover from "./RoleFilter";
+import { CircularProgress } from "@radix-ui/themes"; 
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -61,7 +63,7 @@ const Dashboard = () => {
     () => filteredData.slice(indexOfFirstUser, indexOfLastUser),
     [filteredData, indexOfFirstUser, indexOfLastUser]
   );
-    const totalPages =
+  const totalPages =
     users.length > 0 ? Math.ceil(users.length / usersPerPage) : 1;
 
   return (
@@ -170,8 +172,8 @@ const Dashboard = () => {
                       variant="soft"
                       className="bg-transparent"
                       onClick={() => {
-                        setSelectedUser(user); 
-                        setIsViewOpen(true); 
+                        setSelectedUser(user);
+                        setIsViewOpen(true);
                       }}
                     >
                       <EyeOpenIcon width="18" height="18" />
@@ -224,7 +226,7 @@ const Dashboard = () => {
         <ViewUser user={selectedUser} onClose={() => setIsViewOpen(false)} />
       )}
       {deleteConfirm && (
-        <Dialog open={deleteConfirm} onOpenChange={setDeleteConfirm}>
+        <Dialog.Root open={deleteConfirm} onOpenChange={setDeleteConfirm}>
           <Dialog.Content>
             <p>
               {selectedUsers.length > 1
@@ -235,9 +237,11 @@ const Dashboard = () => {
               <Button
                 variant="solid"
                 onClick={() => {
-                  selectedUsers.length > 1
-                    ? handleDeleteUsers()
-                    : handleDeleteUser();
+                  if (selectedUsers.length > 1) {
+                    handleDeleteUsers();
+                  } else {
+                    handleDeleteUser();
+                  }
                 }}
               >
                 Yes
@@ -247,7 +251,7 @@ const Dashboard = () => {
               </Button>
             </Flex>
           </Dialog.Content>
-        </Dialog>
+        </Dialog.Root>
       )}
     </>
   );

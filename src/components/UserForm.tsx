@@ -84,7 +84,7 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
             </IconButton>
 
             <h1 className="font-semibold text-2xl mb-7 text-blue-500">
-              {userId ? "Edit Admin User" : "Create Admin User"}
+              {userId ? "Edit User" : "Create Admin User"}
             </h1>
 
             <Form className="grid grid-cols-2 gap-4">
