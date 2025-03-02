@@ -28,7 +28,7 @@ export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
   return new Promise<User[]>((resolve) => {
     setTimeout(() => {
       resolve(loadUsersFromLocalStorage());
-    }, 1500); // Simulated API Delay
+    }, 1500); 
   });
 });
 
@@ -55,13 +55,17 @@ const userSlice = createSlice({
       saveUsersToLocalStorage(state.users);
     },
     updateUser: (state, action: PayloadAction<User>) => {
-      const index = state.users.findIndex((user) => user.id === action.payload.id);
+      const index = state.users.findIndex(
+        (user) => user.id === action.payload.id
+      );
       if (index !== -1) state.users[index] = action.payload;
       saveUsersToLocalStorage(state.users);
     },
     deleteUser: (state, action: PayloadAction<string | string[]>) => {
       if (Array.isArray(action.payload)) {
-        state.users = state.users.filter((user) => !action.payload.includes(user.id));
+        state.users = state.users.filter(
+          (user) => !action.payload.includes(user.id)
+        );
       } else {
         state.users = state.users.filter((user) => user.id !== action.payload);
       }
@@ -74,6 +78,7 @@ const userSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
+        console.log("Fetched Users:", action.payload);
         state.users = action.payload;
         state.loading = false;
       })

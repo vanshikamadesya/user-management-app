@@ -34,15 +34,15 @@ const useUserActions = (users: User[]) => {
     setDeleteConfirm(true);
   }, []);
 
-  // Handle actual delete
-  const handleDeleteUser = useCallback(() => {
-    if (selectedUsers.length === 1) {
-      dispatch(deleteUser(selectedUsers[0]));
-      setSelectedUsers([]);
-      setDeleteConfirm(false);
-    }
-  }, [dispatch, selectedUsers]);
-  
+// Handle actual delete
+const handleDeleteUser = useCallback(() => {
+  if (userToDelete) {
+    dispatch(deleteUser(userToDelete)); // Dispatching the single delete action
+    setUserToDelete(null);
+    setDeleteConfirm(false);
+    setSelectedUsers([]); // Reset selection
+  }
+}, [dispatch, userToDelete]);
 
   // Delete multiple users
   const handleDeleteUsers = useCallback(() => {

@@ -6,7 +6,7 @@ import { IoClose } from "react-icons/io5";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { addUser, updateUser } from "../features/userSlice";
+import {  updateUser } from "../features/userSlice";
 import { AppDispatch, RootState } from "../features/store";
 import { User } from "../features/type";
 
@@ -22,7 +22,6 @@ const validationSchema = Yup.object({
   password: Yup.string().required("Password is required"),
   role: Yup.string().required("Role is required"),
   dob: Yup.string().required("Date of birth is required"),
-  gender: Yup.string().required("Gender is required"),
   status: Yup.boolean(),
 });
 
@@ -48,11 +47,11 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
         gender: "",
       };
 
-
   // Function to handle updating an existing user
   const handleEditUser = (values: User) => {
     const updatedUser = {
-      ...values,
+      ...values,   
+
     };
     dispatch(updateUser(updatedUser));
     toast.success("User updated successfully!");
@@ -67,7 +66,7 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
         onSubmit={(values, { resetForm }) => {
           if (userId) {
             handleEditUser(values);
-          } 
+          }
           onSubmit(values);
           resetForm();
           onClose();
@@ -75,7 +74,7 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
         }}
       >
         {({ values, setFieldValue }) => (
-          <div className="w-full min-h-[90vh] bg-white shadow-lg border rounded-md px-7 py-16">
+          <div className="w-full min-h-[90vh] bg-white shadow-lg border rounded-md px-7 py-16 ">
             <IconButton
               className="absolute top-12 right-10 bg-transparent"
               onClick={onClose}
@@ -87,7 +86,7 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
               {userId ? "Edit User" : "Create Admin User"}
             </h1>
 
-            <Form className="grid grid-cols-2 gap-4">
+            <Form className="grid grid-cols-2 gap-8">
               <div>
                 <Field
                   type="text"
@@ -134,7 +133,7 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
                   name="role"
                   className="p-2 border rounded-md w-full border-blue-400"
                 >
-                  <option value="">Role*</option>
+                  <option value="" className="text-blue-400 ">Role*</option>
                   <option value="Admin">Admin</option>
                   <option value="Manager">Manager</option>
                   <option value="Staff">Staff</option>
@@ -150,7 +149,7 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
                 <Field
                   type="date"
                   name="dob"
-                  className="p-2 border rounded-md w-full"
+                  className="p-2 border rounded-md w-full border-blue-400  "
                 />
                 <ErrorMessage
                   name="dob"
@@ -160,7 +159,7 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
               </div>
 
               {/* File Upload */}
-              <div className="flex items-center border p-2 rounded-md">
+              <div className="flex items-center border p-2 rounded-md border-blue-400">
                 <BsPaperclip className="mr-2" />
                 <input
                   type="file"
@@ -175,34 +174,19 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
 
               {/* Gender Selection */}
               <div>
-                <label className="block text-gray-700 mb-1">Gender</label>
+                <label className="block text-gray-700 mb-1 ">Gender</label>
                 <RadioGroup.Root
                   className="flex items-center space-x-4"
                   value={values.gender}
                   onValueChange={(value) => setFieldValue("gender", value)}
                 >
-                  <div className="flex flex-row gap-8 mr-auto mt-2">
-                    <label>
-                      <RadioGroup.Item
-                        value="female"
-                        checked={values.gender === "female"}
-                      />
-                      <span>Female</span>
-                    </label>
-                    <label>
-                      <RadioGroup.Item
-                        value="male"
-                        checked={values.gender === "male"}
-                      />
-                      <span>Male</span>
-                    </label>
+                  <div className=" gap-8 mr-auto mt-2">
+                    <RadioGroup.Root defaultValue="1" name="example">
+                      <RadioGroup.Item value="1">Female</RadioGroup.Item>
+                      <RadioGroup.Item value="2">Male</RadioGroup.Item>
+                    </RadioGroup.Root>
                   </div>
                 </RadioGroup.Root>
-                <ErrorMessage
-                  name="gender"
-                  component="p"
-                  className="text-red-500 text-sm"
-                />
               </div>
 
               {/* Status Toggle */}
@@ -218,8 +202,8 @@ const UserForm: React.FC<UserProp> = ({ userId, onSubmit, onClose }) => {
               </div>
 
               {/* Submit Button */}
-              <div className="col-span-2 flex justify-center">
-                <Button type="submit">
+              <div className="col-span-2 flex  justify-center mt-9">
+                <Button type="submit" className="text-lg px-5 py-5">
                   {userId ? "Update User" : "Create User"}
                 </Button>
               </div>

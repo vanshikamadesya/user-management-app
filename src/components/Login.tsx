@@ -21,8 +21,13 @@ const Login = () => {
   const { error } = useSelector((state: RootState) => state.auth);
 
   return (
-    <div className="bg-gradient-to-r from-cyan-800 to-purple-800 text-white flex justify-center items-center w-full h-screen">
-      <div>
+    <div className="bg-gradient-to-br from-[#9eb1e1] via-[#afdaee] to-[#f0f4f8] flex justify-center items-center w-full h-screen">
+      <div className="backdrop-blur-md bg-white/60 border border-white/40 p-8 rounded-2xl shadow-lg w-96">
+        <h2 className="text-3xl font-bold text-center text-gray-800">Login</h2>
+        <p className="text-center text-sm text-gray-600 mt-2">Access your account</p>
+
+        {error && <p className="text-red-500 text-center mt-2">{error}</p>}
+
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema} 
@@ -39,19 +44,14 @@ const Login = () => {
             }
           }}
         >
-          <Form className="space-y-6 border rounded-md px-9 py-4 mt-11 bg-white border-black">
-            <h2 className="text-4xl font-bold tracking-normal text-center text-black">
-              Login
-            </h2>
-
-            {error && <p className="text-red-500 text-center">{error}</p>}
-
+          <Form className="space-y-5 mt-4">
             <div>
-              <label className="text-black text-lg font-normal">Email: </label>
+              <label className="text-gray-700 text-lg font-medium">Email:</label>
               <Field
                 type="email"
                 name="email"
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-500 border-black text-black"
+                className="w-full p-3 border border-gray-300 rounded-lg bg-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 placeholder-gray-500"
+                placeholder="Enter your email"
               />
               <ErrorMessage
                 name="email"
@@ -61,11 +61,12 @@ const Login = () => {
             </div>
 
             <div>
-              <label className="text-black text-lg font-normal">Password:</label>
+              <label className="text-gray-700 text-lg font-medium">Password:</label>
               <Field
                 type="password"
                 name="password"
-                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-purple-500 border-black text-black"
+                className="w-full p-3 border border-gray-300 rounded-lg bg-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 placeholder-gray-500"
+                placeholder="••••••••"
               />
               <ErrorMessage
                 name="password"
@@ -76,16 +77,16 @@ const Login = () => {
 
             <button
               type="submit"
-              className="w-full bg-purple-600 text-white p-2 rounded-md hover:bg-purple-700 transition"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-all shadow-md hover:shadow-blue-500/50"
             >
               Login
             </button>
 
-            <p className="text-center text-black text-sm mt-4">
+            <p className="text-center text-gray-600 text-sm mt-4">
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="text-purple-600 font-bold hover:underline"
+                className="text-blue-500 font-bold hover:underline"
               >
                 Sign Up
               </Link>
@@ -98,91 +99,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// import { login } from "../features/authSlice";
-// import { useDispatch } from "react-redux";
-// import { AppDispatch } from "../features/store";
-// import * as Yup from "yup";
-// import { Formik, Form, Field, ErrorMessage } from "formik";
-// import { Link } from "react-router-dom";
-
-// const Login = () => {
-//   const dispatch = useDispatch<AppDispatch>();
-
-//   return (
-//     <div className="bg-gradient-to-r from-cyan-800 to-purple-800 text-white justify-center items-center w-full h-screen flex">
-//       <div>
-//         <Formik
-//           initialValues={{ email: "", password: "" }}
-//           validationSchema={Yup.object({
-//             email: Yup.string()
-//               .email("Invalid email")
-//               .required("Email is required"),
-//             password: Yup.string()
-//               .min(6, "Pasword must be 6 character")
-//               .required("Password is required"),
-//           })}
-//           onSubmit={(values) => {
-//             dispatch(login(values));
-//           }}
-//         >
-//           <Form className="space-y-6 border rounded-md px-9 py-4 mt-11 bg-white border-black ">
-//             <h2 className="text-4xl font-bold tracking-normal text-center text-black ">
-//               Login
-//             </h2>
-
-//             <div>
-//               <label className=" text-black text-lg text-bold mb-3">
-//                 Email:{" "}
-//               </label>
-//               <Field
-//                 type="email"
-//                 name="email"
-//                 className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border-black"
-//               />
-//               <ErrorMessage
-//                 name="email"
-//                 component="p"
-//                 className="text-red-500 text-sm"
-//               />
-//             </div>
-//             <div>
-//               <label className="text-black text-lg text-bold ">Password:</label>
-//               <Field
-//                 type="password"
-//                 name="password"
-//                 className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 border-black"
-//               />
-//               <ErrorMessage
-//                 name="password"
-//                 component="p"
-//                 className="text-red-500 text-sm"
-//               />
-//             </div>
-//             <div className="flex justify-between text-sm text-purple-500">
-//               <a href="#" className="hover:underline">
-//                 Forgot Password?
-//               </a>
-//             </div>
-
-//             <button
-//                 type="submit"
-//                 className="w-full bg-purple-600 text-white p-2 rounded-md hover:bg-purple-700 transition"
-//               >
-//                 Login
-//               </button>
-//               <p className="text-center text-black text-sm mt-4">
-//               Don't have an account?{" "}
-//               <Link to="/register" className="text-purple-600 font-bold hover:underline">
-//                 Sign Up
-//               </Link>
-//             </p>
-
-//           </Form>
-//         </Formik>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Login;

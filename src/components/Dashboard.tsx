@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   IconButton,
   Flex,
@@ -24,14 +24,14 @@ import { RootState, AppDispatch } from "../features/store";
 import { User } from "../features/type";
 import ViewUser from "./ViewUser";
 import useUserActions from "../utils/deleteActions";
-import { deleteUser } from "../features/userSlice";
+import {  fetchUsers } from "../features/userSlice";
 import {
   handleGlobalSearch,
   handleDownload,
   handleSearch,
 } from "../utils/tableActions";
 import FilterPopover from "./RoleFilter";
-import { CircularProgress } from "@radix-ui/themes"; 
+import { Spinner } from "@radix-ui/themes";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -44,6 +44,7 @@ const Dashboard = () => {
   const users = useSelector((state: RootState) => state.user.users);
   const [filteredData, setFilteredData] = useState(users);
   const [roleFilter, setRoleFilter] = useState("");
+  const loading = useSelector((state: RootState) => state.user.loading);
 
   const {
     selectedUsers,
@@ -52,9 +53,14 @@ const Dashboard = () => {
     toggleSelectAll,
     handleDeleteUser,
     deleteConfirm,
+    confirmDeleteUser,
     handleDeleteUsers,
     setDeleteConfirm,
   } = useUserActions(users);
+
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
   // Calculate indexes for pagination
   const indexOfLastUser = currentPage * usersPerPage;
@@ -74,7 +80,7 @@ const Dashboard = () => {
           <div className="flex justify-between items-center w-full">
             <div className="flex flex-col">
               <Flex align="start" gap="3">
-                <Button variant="soft">Listing</Button>
+                <Button variant="soft" className="bg-cyan-700 text-white">Listing</Button>
                 <Button variant="soft">Import</Button>
                 <Button variant="soft">Import Zip</Button>
               </Flex>
@@ -121,88 +127,99 @@ const Dashboard = () => {
               </IconButton>
               <IconButton
                 variant="soft"
-                onClick={() => setDeleteConfirm(true)} // Open confirmation modal
-                className={`text-white bg-red-500 w-12 h-12 flex items-center justify-center text-2xl font-bold ${
-                  selectedUsers.length === 0
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
+                onClick={() => setDeleteConfirm(true)}
+                className={`text-white bg-red-500 w-12 h-12 flex items-center justify-center text-2xl font-bold{
+                selectedUsers.length === 0 ? "opacity-50 cursor-not-allowed" : ""
                 }`}
-                disabled={selectedUsers.length === 0} // Disable if no users are selected
+                disabled={selectedUsers.length === 0}
               >
                 <TrashIcon />
               </IconButton>
             </div>
           </div>
           {/* Table */}
-          <Table.Root>
-            <Table.Header className="bg-cyan-700 py-5">
-              <Table.Row className="text-lg text-white">
-                <Table.ColumnHeaderCell>
-                  <Checkbox
-                    checked={selectAll}
-                    onCheckedChange={toggleSelectAll}
-                  />
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>DOB</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Gender</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {currentUsers.map((user) => (
-                <Table.Row key={user.id} className="text-blue-600 font-medium">
-                  <Table.Cell>
+          {loading ? (
+            <div className="flex justify-center items-center h-40">
+              <Spinner size="3" />
+            </div>
+          ) : users.length > 0 ? (
+            <Table.Root>
+              <Table.Header className="bg-cyan-700 py-5">
+                <Table.Row className="text-lg text-white">
+                  <Table.ColumnHeaderCell>
                     <Checkbox
-                      checked={selectedUsers.includes(user.id)}
-                      onCheckedChange={() => toggleUserSelection(user.id)}
+                      checked={selectAll}
+                      onCheckedChange={toggleSelectAll}
                     />
-                  </Table.Cell>
-                  <Table.Cell>{user.name}</Table.Cell>
-                  <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell>{user.role}</Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell>{user.status ? "Active" : "Inactive"}</Table.Cell>
-                  <Table.Cell>
-                    <IconButton
-                      variant="soft"
-                      className="bg-transparent"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setIsViewOpen(true);
-                      }}
-                    >
-                      <EyeOpenIcon width="18" height="18" />
-                    </IconButton>
-                    <IconButton
-                      variant="soft"
-                      className="bg-transparent"
-                      onClick={() => navigate(`/editUser/${user.id}`)}
-                    >
-                      <Pencil1Icon width="18" height="18" />
-                    </IconButton>
-                    <IconButton
-                      variant="soft"
-                      className="bg-transparent"
-                      onClick={() => dispatch(deleteUser(user.id))}
-                    >
-                      <TrashIcon width="18" height="18" />
-                    </IconButton>
-                  </Table.Cell>
+                  </Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Email</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Role</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>DOB</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Gender</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+                  <Table.ColumnHeaderCell>Actions</Table.ColumnHeaderCell>
                 </Table.Row>
-              ))}
-            </Table.Body>
-          </Table.Root>
+              </Table.Header>
+              <Table.Body>
+                {currentUsers.map((user) => (
+                  <Table.Row
+                    key={user.id}
+                    className="text-blue-600 font-medium "
+                  >
+                    <Table.Cell>
+                      <Checkbox
+                        checked={selectedUsers.includes(user.id)}
+                        onCheckedChange={() => toggleUserSelection(user.id)}
+                      />
+                    </Table.Cell>
+                    <Table.Cell>{user.name}</Table.Cell>
+                    <Table.Cell>{user.email}</Table.Cell>
+                    <Table.Cell>{user.role}</Table.Cell>
+                    <Table.Cell></Table.Cell>
+                    <Table.Cell></Table.Cell>
+                    <Table.Cell>
+                      {user.status ? "Active" : "Inactive"}
+                    </Table.Cell>
+                    <Table.Cell>
+                      <IconButton
+                        variant="soft"
+                        className="bg-transparent"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setIsViewOpen(true);
+                        }}
+                      >
+                        <EyeOpenIcon width="18" height="18" />
+                      </IconButton>
+                      <IconButton
+                        variant="soft"
+                        className="bg-transparent"
+                        onClick={() => navigate(`/editUser/${user.id}`)}
+                      >
+                        <Pencil1Icon width="18" height="18" />
+                      </IconButton>
+                      <IconButton
+                        variant="soft"
+                        className="bg-transparent"
+                        onClick={() => confirmDeleteUser(user.id)}
+                      >
+                        <TrashIcon width="18" height="18" />
+                      </IconButton>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table.Root>
+          ) : (
+            <p className="text-center mt-4">No users found.</p>
+          )}
 
           {/* Pagination Controls */}
-          <div className="flex justify-between items-center mt-14">
+          <div className="flex gap-8 pl-[600px]  mt-20">
             <IconButton
               variant="soft"
-              className="bg-gray-200 disabled:opacity-50"
+              className="bg-gray-500 text-white text-xl disabled:opacity-50"
               disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}
             >
@@ -213,7 +230,7 @@ const Dashboard = () => {
             </span>
             <IconButton
               variant="soft"
-              className="bg-gray-200 disabled:opacity-50"
+              className="bg-gray-500 text-white disabled:opacity-50"
               disabled={currentPage === totalPages}
               onClick={() => setCurrentPage(currentPage + 1)}
             >
@@ -227,13 +244,13 @@ const Dashboard = () => {
       )}
       {deleteConfirm && (
         <Dialog.Root open={deleteConfirm} onOpenChange={setDeleteConfirm}>
-          <Dialog.Content>
-            <p>
+          <Dialog.Content className="w-96 ">
+            <p className="py-4">
               {selectedUsers.length > 1
                 ? `Are you sure you want to delete ${selectedUsers.length} users?`
                 : "Are you sure you want to delete this user?"}
             </p>
-            <Flex gap="2">
+            <Flex gap="4">
               <Button
                 variant="solid"
                 onClick={() => {

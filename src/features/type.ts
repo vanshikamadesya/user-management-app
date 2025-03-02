@@ -5,7 +5,7 @@ export interface User {
   password: string;
   role: string;
   status: boolean;
-  dob: string;
-  gender: string;
+  dob?: string;
+  gender?: string;
   profile?: File | null;
 }
